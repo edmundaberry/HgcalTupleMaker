@@ -9,10 +9,18 @@
 class HgcalTupleMaker_GenParticles : public edm::EDProducer {
  public:
   explicit HgcalTupleMaker_GenParticles(const edm::ParameterSet&);
+  
   int getMotherIndex (const reco::GenParticleCollection::const_iterator & it_part,
 		      const edm::Handle<reco::GenParticleCollection> & particles,
 		      int i_mother);
-    
+
+  int getStat3DaughterIndex (const reco::GenParticleCollection::const_iterator & it_part,
+			     const edm::Handle<reco::GenParticleCollection> & particles,
+			     int i_daughter);
+  
+
+  int getNumStat3Daughters ( const reco::GenParticleCollection::const_iterator & it_part );
+  	
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag   inputTag;
