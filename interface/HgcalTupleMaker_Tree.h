@@ -55,6 +55,7 @@ class HgcalTupleMaker_Tree : public edm::EDAnalyzer {
 		 STRING_BOOL_M, STRING_INT_M, STRING_STRING_M,
 		 STRING_FLOAT_V_M,
 		 FLOAT_V_V,
+		 DOUBLE_V_V,
 		 INT_V_V
                  };
 };

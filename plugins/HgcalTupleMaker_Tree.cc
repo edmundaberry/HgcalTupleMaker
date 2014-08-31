@@ -50,6 +50,7 @@ beginJob() {
   typedef std::map<std::string,std::string> mapStringString;
   typedef std::map<std::string,std::vector<float> > mapStringDoubles;
   typedef std::vector<std::vector<float> > vectorVectorFloats;
+  typedef std::vector<std::vector<double> > vectorVectorDoubles;
   typedef std::vector<std::vector<int> > vectorVectorInts;
 
   std::map<std::string, LEAFTYPE> leafmap;
@@ -67,6 +68,7 @@ beginJob() {
   leafmap["Stringintstdmap"   ] = STRING_INT_M;
   leafmap["Stringfloatsstdmap"] = STRING_FLOAT_V_M;
   leafmap["floatss"] = FLOAT_V_V;
+  leafmap["doubless"] = DOUBLE_V_V;
   leafmap["intss"] = INT_V_V;
   // leafmap[""] = LORENTZ_V_V;
   
@@ -124,6 +126,7 @@ beginJob() {
       case STRING_STRING_M :  connectors.push_back( new TypedBranchConnector<mapStringString>     (selection,   "", tree) ); break;
       case STRING_FLOAT_V_M:  connectors.push_back( new TypedBranchConnector<mapStringDoubles>    (selection,   "", tree) ); break;
       case FLOAT_V_V       :  connectors.push_back( new TypedBranchConnector<vectorVectorFloats>  (selection,   "", tree) ); break;
+      case DOUBLE_V_V      :  connectors.push_back( new TypedBranchConnector<vectorVectorDoubles> (selection,   "", tree) ); break;
       case INT_V_V         :  connectors.push_back( new TypedBranchConnector<vectorVectorInts>    (selection,   "", tree) ); break;
 
       default:
