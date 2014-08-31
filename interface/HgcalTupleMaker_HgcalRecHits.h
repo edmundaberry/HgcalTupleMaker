@@ -12,7 +12,9 @@ class HgcalTupleMaker_HgcalRecHits : public edm::EDProducer {
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag   inputTag;
+  const std::string     geoTag;
   const std::string     prefix,suffix;
+  const bool            isHGEE;
 };
 
 #endif
