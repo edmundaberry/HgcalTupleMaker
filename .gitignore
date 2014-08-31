@@ -2,3 +2,7 @@
 *.root
 *~
 .#*
+.*
+!.gitignore
+dump.txt
+__*
