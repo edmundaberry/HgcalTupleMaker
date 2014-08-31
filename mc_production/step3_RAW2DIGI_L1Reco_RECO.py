@@ -51,17 +51,25 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Output definition
 
-process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
-    splitLevel = cms.untracked.int32(0),
-    eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
-    fileName = cms.untracked.string('file:OUTPUTFILENAME.root'),
-    dataset = cms.untracked.PSet(
-        filterName = cms.untracked.string(''),
-        dataTier = cms.untracked.string('GEN-SIM-RECO')
-    )
+process.output = cms.OutputModule( "PoolOutputModule",
+  outputCommands = cms.untracked.vstring(
+    'keep *'
+  ),
+  fileName = cms.untracked.string('file:OUTPUTFILENAME.root')
 )
 
+# 
+# process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
+#     splitLevel = cms.untracked.int32(0),
+#     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
+#     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
+#     fileName = cms.untracked.string('file:OUTPUTFILENAME.root'),
+#     dataset = cms.untracked.PSet(
+#         filterName = cms.untracked.string(''),
+#         dataTier = cms.untracked.string('GEN-SIM-RECO')
+#     )
+# )
+# 
 # Additional output definition
 
 # Other statements
@@ -73,10 +81,10 @@ process.raw2digi_step = cms.Path(process.RawToDigi)
 process.L1Reco_step = cms.Path(process.L1Reco)
 process.reconstruction_step = cms.Path(process.reconstruction)
 process.endjob_step = cms.EndPath(process.endOfProcess)
-process.FEVTDEBUGHLToutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
+process.output_step = cms.EndPath(process.output)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.raw2digi_step,process.L1Reco_step,process.reconstruction_step,process.endjob_step,process.FEVTDEBUGHLToutput_step)
+process.schedule = cms.Schedule(process.raw2digi_step,process.L1Reco_step,process.reconstruction_step,process.endjob_step,process.output_step)
 
 # customisation of the process.
 
