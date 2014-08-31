@@ -20,7 +20,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 
 process.source = cms.Source("PoolSource", 
    fileNames = cms.untracked.vstring(
-        "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_QQH_MC_RECO_MERGED/HgcalRelVal_QQH_MC_RECO.root"
+        "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_QQH_MC_RECO/HgcalRelVal_QQH_MC_RECO.root"
+        # "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_WJet_MC_RECO_MERGED/HgcalRelVal_WJet_MC_RECO.root"
    )
 )
 
@@ -33,21 +34,28 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string( 'HGCAL_output.root' )
+    fileName = cms.string( 'HGCAL_QQH_output.root' )
 )
 
 #------------------------------------------------------------------------------------
-# Prune the jets with a smaller radius parameter
+# Set up the global tag
 #------------------------------------------------------------------------------------
 
-# process.load("Configuration.StandardSequences.Reconstruction_cff")
-# process.ca8PFJetsCHSFinePruned = process.ca8PFJetsCHSPruned.clone()
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
+
+#------------------------------------------------------------------------------------
+# Set up geometry to get positions of rechits:
+#------------------------------------------------------------------------------------
+
+process.load('Configuration.Geometry.GeometryExtended2023HGCalV4MuonReco_cff')
 
 #------------------------------------------------------------------------------------
 # Set up our analyzer
 #------------------------------------------------------------------------------------
 
-process.load("HGCALANA.HgcalTupleMaker.HgcalTupleMaker_cfi")
+process.load("HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_cfi")
 
 process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
     outputCommands = cms.untracked.vstring(
@@ -56,6 +64,8 @@ process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
         'keep *_hgcalTupleGenParticles_*_*',
         'keep *_hgcalTupleGenJets_*_*',
         'keep *_hgcalTuplePFJets_*_*',
+        'keep *_hgcalTuplePFCA*Jets_*_*',
+        'keep *_hgcalTuplePFCands_*_*',
         'keep *_hgcalTupleCaloJets_*_*',
         'keep *_hgcalTupleHGEERecHits_*_*', 
         'keep *_hgcalTupleHGHEBRecHits_*_*', 
@@ -64,18 +74,69 @@ process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
 )                                        
 
 #------------------------------------------------------------------------------------
-# Set up path
+# You'll need to re-run pfNoPileUpJMESequence in order to make new jet collections
+# (e.g. new R parameters for CambridgeAachen and new rcut_parameters for pruning)
+#------------------------------------------------------------------------------------
+
+process.load("CommonTools.ParticleFlow.pfNoPileUpJME_cff")
+
+#------------------------------------------------------------------------------------
+# Make a list of the pruning rcut_factors you want to include and analyze
+# Note that 0.5 (CMS default) is included by default
+#------------------------------------------------------------------------------------
+
+rcut_factors = [ 
+    0.001,
+    0.003,
+    0.005,
+    0.008,
+    0.01 ,
+    0.02 ,
+    0.03 ,
+    0.04 ,
+    0.05 ,
+    0.1  ,
+    0.2  ,
+    0.3  ,
+    0.4  
+]
+
+process.load("RecoParticleFlow.PFClusterProducer.particleFlowRecHitHGC_cff")
+
+#------------------------------------------------------------------------------------
+# Process the list of rcut_factors.  This makes two new sequences:
+# process.myJetProducerSequence: produces jet collections with rcut_parameters applied
+# process.myJetTupleMakerSequence: analyzes jet collections
+#------------------------------------------------------------------------------------
+
+from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_PFPrunedJets_cfi import makePrunedJetTupleMakersForRCuts
+
+makePrunedJetTupleMakersForRCuts (process, rcut_factors ) 
+
+#------------------------------------------------------------------------------------
+# Define the final path
 #------------------------------------------------------------------------------------
 
 process.p = cms.Path(
+    # Needed to get PFRecHits
+    process.particleFlowRecHitHGC*
+    # Needed to produce new jet collections:
+    process.pfNoPileUpJMESequence*          
+    # Produce new jet collections
+    process.myJetProducerSequence*
+    process.myPrunedJetProducerSequence*
+    # Make HGCAL tuples
+    process.myJetTupleMakerSequence*
+    process.myPrunedJetTupleMakerSequence*
     process.hgcalTupleEvent*
     process.hgcalTupleGenParticles*
     process.hgcalTupleGenJets*
-    process.hgcalTuplePFJets*
+    process.hgcalTuplePFCands*
     process.hgcalTupleCaloJets*
     process.hgcalTupleHGEERecHits* 
     process.hgcalTupleHGHEBRecHits*
     process.hgcalTupleHGHEFRecHits*
+    # Package everything into a tree
     process.hgcalTupleTree
 )
 
