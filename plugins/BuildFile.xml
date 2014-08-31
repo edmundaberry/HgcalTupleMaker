@@ -1,9 +1,13 @@
-<library   file="*.cc" name="HcalDigiAnalyzer_Plugins">
+<library   file="*.cc" name="HgcalTupleMaker_Plugins">
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/PluginManager"/>
   <use   name="FWCore/ParameterSet"/>
   <use   name="CommonTools/UtilAlgos"/>
+  <use   name="Geometry/FCalGeometry"/>
+  <use   name="Geometry/Records"/>
   <use   name="DataFormats/ParticleFlowCandidate"/>
+  <use   name="DataFormats/ParticleFlowReco"/>
+  <use   name="DataFormats/JetReco"/>
   <use   name="HGCALANA/HgcalTupleMaker"/>
   <use   name="boost"/>
   <use   name="rootcore"/>
