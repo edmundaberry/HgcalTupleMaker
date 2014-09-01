@@ -21,6 +21,12 @@ class HgcalTupleMaker_GenParticles : public edm::EDProducer {
 
   int getNumStat3Daughters ( const reco::GenParticleCollection::const_iterator & it_part );
   	
+
+
+  int hasPartonDaughter ( const reco::GenParticleCollection::const_iterator & it_part );
+  
+    
+
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag   inputTag;
