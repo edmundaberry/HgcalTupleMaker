@@ -59,7 +59,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   HGCRecHitCollection::const_iterator it_recHit;
   HGCRecHitCollection::const_iterator first_HGCEERecHit  = hgceeRecHits  -> begin();
   HGCRecHitCollection::const_iterator first_HGCHEBRecHit = hgchebRecHits -> begin();
-  HGCRecHitCollection::const_iterator first_HGCHEFRecHit = hgchebRecHits -> begin();
+  HGCRecHitCollection::const_iterator first_HGCHEFRecHit = hgchefRecHits -> begin();
   
   if( pfCands.isValid() ) {
     edm::LogInfo("HgcalTupleMaker_PFCandsInfo") << "Total # PFCands: " << pfCands->size();
