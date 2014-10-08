@@ -20,13 +20,13 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 
 process.source = cms.Source("PoolSource", 
    fileNames = cms.untracked.vstring(
-        "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_QQH_MC_RECO/HgcalRelVal_QQH_MC_RECO.root"
-        # "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_WJet_MC_RECO_MERGED/HgcalRelVal_WJet_MC_RECO.root"
+       "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_QQH_MC_RECO/HgcalRelVal_QQH_MC_RECO.root"
+       # "root://eoscms//eos/cms/store/user/eberry/HGCAL/HgcalRelVal_WJet_MC_RECO_MERGED/HgcalRelVal_WJet_MC_RECO.root"
    )
 )
 
 process.maxEvents = cms.untracked.PSet(
-   input = cms.untracked.int32(-1)
+   input = cms.untracked.int32(1000)
 )
 
 #------------------------------------------------------------------------------------
@@ -34,7 +34,8 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string( 'HGCAL_QQH_output.root' )
+                                    # fileName = cms.string( 'HGCAL_WJet_output.root' )
+fileName = cms.string( 'HGCAL_QQH_output.root' )
 )
 
 #------------------------------------------------------------------------------------
@@ -66,6 +67,9 @@ process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
         'keep *_hgcalTuplePFJets_*_*',
         'keep *_hgcalTuplePFCA*Jets_*_*',
         'keep *_hgcalTuplePFCands_*_*',
+        'keep *_hgcalTupleHGEEPFClusters_*_*',
+        'keep *_hgcalTupleHGHEBPFClusters_*_*',
+        'keep *_hgcalTupleHGHEFPFClusters_*_*',
         'keep *_hgcalTupleCaloJets_*_*',
         'keep *_hgcalTupleHGEERecHits_*_*', 
         'keep *_hgcalTupleHGHEBRecHits_*_*', 
@@ -128,11 +132,14 @@ process.p = cms.Path(
     # Make HGCAL tuples
     process.myJetTupleMakerSequence*
     process.myPrunedJetTupleMakerSequence*
+    process.hgcalTupleCaloJets*
     process.hgcalTupleEvent*
     process.hgcalTupleGenParticles*
     process.hgcalTupleGenJets*
     process.hgcalTuplePFCands*
-    process.hgcalTupleCaloJets*
+    process.hgcalTupleHGEEPFClusters*
+    process.hgcalTupleHGHEBPFClusters*
+    process.hgcalTupleHGHEFPFClusters*
     process.hgcalTupleHGEERecHits* 
     process.hgcalTupleHGHEBRecHits*
     process.hgcalTupleHGHEFRecHits*
@@ -143,6 +150,6 @@ process.p = cms.Path(
 #------------------------------------------------------------------------------------
 # Make a schedule and run
 #------------------------------------------------------------------------------------
-    
+
 process.schedule = cms.Schedule(process.p)
 

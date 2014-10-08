@@ -7,6 +7,7 @@
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_GenJets.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_PFJets.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_PFCands.h"
+#include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_PFClusters.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_CaloJets.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_HgcalRecHits.h"
 
@@ -16,5 +17,6 @@ DEFINE_FWK_MODULE(HgcalTupleMaker_GenParticles);
 DEFINE_FWK_MODULE(HgcalTupleMaker_GenJets);
 DEFINE_FWK_MODULE(HgcalTupleMaker_PFJets);
 DEFINE_FWK_MODULE(HgcalTupleMaker_PFCands);
+DEFINE_FWK_MODULE(HgcalTupleMaker_PFClusters);
 DEFINE_FWK_MODULE(HgcalTupleMaker_CaloJets);
 DEFINE_FWK_MODULE(HgcalTupleMaker_HgcalRecHits);
