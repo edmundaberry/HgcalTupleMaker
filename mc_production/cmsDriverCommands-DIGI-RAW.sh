@@ -1,0 +1,14 @@
+cmsDriver.py step2 \
+--conditions auto:upgradePLS3 \
+-n 1 \
+--eventcontent FEVTDEBUGHLT \
+-s DIGI:pdigi_valid,L1,DIGI2RAW \
+--datatier GEN-SIM-DIGI-RAW \
+--customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon \
+--geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco \
+--magField 38T_PostLS1 \
+--pileup AVE_140_BX_25ns \
+--filein file:step1.root \
+--fileout file:step2.root \
+--pileup_input file:MinBias.root \
+--no_exec

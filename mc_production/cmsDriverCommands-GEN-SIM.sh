@@ -1,0 +1,12 @@
+cmsDriver.py QQH1352T_Tauola_14TeV_cfi \
+--conditions auto:upgradePLS3 \
+-n 1 \
+--eventcontent FEVTDEBUG \
+--relval 10000,100 -s GEN,SIM \
+--datatier GEN-SIM \
+--beamspot Gauss \
+--customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon \
+--geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco \
+--magField 38T_PostLS1 \
+--fileout file:step1.root \
+--no_exec
