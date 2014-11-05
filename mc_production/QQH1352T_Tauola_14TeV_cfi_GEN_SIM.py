@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.20 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: QQH1352T_Tauola_14TeV_cfi --conditions auto:upgradePLS3 -n 100 --eventcontent FEVTDEBUG --relval 9000,100 -s GEN,SIM --datatier GEN-SIM --beamspot Gauss --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon --geometry Extended2023HGCalV4Muon,Extended2023HGCalV4MuonReco --magField 38T_PostLS1 --geometry Extended2023HGCalV4Muon,Extended2023HGCalV4MuonReco --fileout file:step1.root --no_exec
+# with command line options: QQH1352T_Tauola_14TeV_cfi --conditions auto:upgradePLS3 -n 1 --eventcontent FEVTDEBUG --relval 10000,100 -s GEN,SIM --datatier GEN-SIM --beamspot Gauss --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon --geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco --magField 38T_PostLS1 --fileout file:step1.root --no_exec
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('SIM')
@@ -13,8 +13,8 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
-process.load('Configuration.Geometry.GeometryExtended2023HGCalV4MuonReco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023HGCalV4Muon_cff')
+process.load('Configuration.Geometry.GeometryExtended2023HGCalMuonReco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023HGCalMuon_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 process.load('Configuration.StandardSequences.Generator_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedGauss_cfi')
@@ -25,7 +25,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(
-	#PROCESSEVENTS
+      #PROCESSEVENTS
     )
 )
 
