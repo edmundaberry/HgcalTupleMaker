@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.20 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step3 --conditions auto:upgradePLS3 -n 10 --eventcontent FEVTDEBUGHLT -s RAW2DIGI,L1Reco,RECO --datatier GEN-SIM-RECO --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon --geometry Extended2023HGCalV4Muon,Extended2023HGCalV4MuonReco --magField 38T_PostLS1 --filein file:step2.root --fileout file:step3.root --no_exec
+# with command line options: step3 --conditions auto:upgradePLS3 -n 10 --eventcontent FEVTDEBUGHLT -s RAW2DIGI,L1Reco,RECO --datatier GEN-SIM-RECO --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon --geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco --magField 38T_PostLS1 --filein file:step2.root --fileout file:step3.root --no_exec
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('RECO')
@@ -13,7 +13,7 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
-process.load('Configuration.Geometry.GeometryExtended2023HGCalV4MuonReco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023HGCalMuonReco_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.load('Configuration.StandardSequences.L1Reco_cff')
@@ -29,7 +29,6 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    secondaryFileNames = cms.untracked.vstring(),
     skipEvents = cms.untracked.uint32(
         #SKIPEVENTS
     ),                           
@@ -58,7 +57,6 @@ process.output = cms.OutputModule( "PoolOutputModule",
   fileName = cms.untracked.string('file:OUTPUTFILENAME.root')
 )
 
-# 
 # process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
 #     splitLevel = cms.untracked.int32(0),
 #     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
@@ -69,7 +67,7 @@ process.output = cms.OutputModule( "PoolOutputModule",
 #         dataTier = cms.untracked.string('GEN-SIM-RECO')
 #     )
 # )
-# 
+
 # Additional output definition
 
 # Other statements
