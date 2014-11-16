@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.20 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step2 --conditions auto:upgradePLS3 -n 1 --eventcontent FEVTDEBUGHLT -s DIGI:pdigi_valid,L1,DIGI2RAW --datatier GEN-SIM-DIGI-RAW --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon --geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco --magField 38T_PostLS1 --pileup NoPileUp --filein file:step1.root --fileout file:step2.root --no_exec
+# with command line options: step2 --conditions auto:upgradePLS3 -n 1 --eventcontent FEVTDEBUGHLT -s DIGI:pdigi_valid,L1,DIGI2RAW --datatier GEN-SIM-DIGI-RAW --customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCal --geometry Extended2023HGCal,Extended2023HGCalReco --magField 38T_PostLS1 --pileup NoPileUp --filein file:step1.root --fileout file:step2.root --no_exec
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('DIGI2RAW')
@@ -13,7 +13,7 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
-process.load('Configuration.Geometry.GeometryExtended2023HGCalMuonReco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023HGCalReco_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 process.load('Configuration.StandardSequences.Digi_cff')
 process.load('Configuration.StandardSequences.SimL1Emulator_cff')
@@ -82,9 +82,9 @@ process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_s
 # customisation of the process.
 
 # Automatic addition of the customisation function from SLHCUpgradeSimulations.Configuration.combinedCustoms
-from SLHCUpgradeSimulations.Configuration.combinedCustoms import cust_2023HGCalMuon 
+from SLHCUpgradeSimulations.Configuration.combinedCustoms import cust_2023HGCal 
 
-#call to customisation function cust_2023HGCalMuon imported from SLHCUpgradeSimulations.Configuration.combinedCustoms
-process = cust_2023HGCalMuon(process)
+#call to customisation function cust_2023HGCal imported from SLHCUpgradeSimulations.Configuration.combinedCustoms
+process = cust_2023HGCal(process)
 
 # End of customisation functions

@@ -4,8 +4,8 @@ cmsDriver.py step2 \
 --eventcontent FEVTDEBUGHLT \
 -s DIGI:pdigi_valid,L1,DIGI2RAW \
 --datatier GEN-SIM-DIGI-RAW \
---customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCalMuon \
---geometry Extended2023HGCalMuon,Extended2023HGCalMuonReco \
+--customise SLHCUpgradeSimulations/Configuration/combinedCustoms.cust_2023HGCal \
+--geometry Extended2023HGCal,Extended2023HGCalReco \
 --magField 38T_PostLS1 \
 --pileup NoPileUp \
 --filein file:step1.root \
