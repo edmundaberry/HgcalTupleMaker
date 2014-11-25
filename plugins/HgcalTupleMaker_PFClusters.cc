@@ -77,17 +77,14 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       // "fractions" because rechits can be shared between multiple clusters
       // Loop over these
 	
-      const std::vector<reco::PFRecHitFraction>& recHitFractions = it -> recHitFractions();
-      std::vector<reco::PFRecHitFraction>::const_iterator it_recHitFraction     = recHitFractions.begin();
-      std::vector<reco::PFRecHitFraction>::const_iterator it_recHitFraction_end = recHitFractions.end();
+      const std::vector<std::pair<DetId, float> >& hitsAndFractions = it -> hitsAndFractions();
+      std::vector<std::pair<DetId, float> >::const_iterator it_hitAndFraction     = hitsAndFractions.begin();
+      std::vector<std::pair<DetId, float> >::const_iterator it_hitAndFraction_end = hitsAndFractions.end();
       
-      for (; it_recHitFraction != it_recHitFraction_end; ++it_recHitFraction){
+      for (; it_hitAndFraction != it_hitAndFraction_end; ++it_hitAndFraction){
 	
-	// This rechit might be null!
-	if (it_recHitFraction -> recHitRef().isNull()) continue;
-	  
-	const unsigned detid    = it_recHitFraction -> recHitRef() -> detId();
-	const double   fraction = it_recHitFraction -> fraction();
+	const DetId  detid    = it_hitAndFraction -> first;
+	const float  fraction = it_hitAndFraction -> second;
 	
 	it_recHit = recHits -> find ( detid );
 	int index = it_recHit - first_recHit;
