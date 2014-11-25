@@ -16,6 +16,9 @@ myPrunedJetProducerSequence   = cms.Sequence ( ca4PFJetsCHSPrunedRCut5 )
 myPrunedJetTupleMakerSequence = cms.Sequence ( hgcalTuplePFCA4PrunedRCut5Jets ) 
 
 def makePrunedJetTupleMakersForRCuts ( process, rcut_factors ) :
+
+    oldJetProducerName = "ca4PFJetsCHSPrunedRCut5"
+    process.MessageLogger.suppressError =  cms.untracked.vstring( "ca4PFJetsCHS", oldJetProducerName )
     
     for rcut_factor in rcut_factors:   
         
@@ -23,7 +26,6 @@ def makePrunedJetTupleMakersForRCuts ( process, rcut_factors ) :
         factorString = str(rcut_factor).replace("0.","")
 
         # Create the new jet producer module from the old jet producer module
-        oldJetProducerName = "ca4PFJetsCHSPrunedRCut5"
         newJetProducerName = oldJetProducerName.replace("5", factorString)
         setattr(process, newJetProducerName, ca4PFJetsCHSPrunedRCut5.clone() )
 
@@ -50,3 +52,5 @@ def makePrunedJetTupleMakersForRCuts ( process, rcut_factors ) :
                                                 getattr(process, oldTupleMakerName) + getattr(process,newTupleMakerName))
         
     
+        # Silence message logger
+        process.MessageLogger.suppressError.append ( newJetProducerName )
