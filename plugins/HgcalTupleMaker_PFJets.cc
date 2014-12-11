@@ -5,6 +5,7 @@
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
 #include "HGCALANA/HgcalTupleMaker/interface/JetTools.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 struct same_pf_cand_as { 
   reco::PFCandidate cand1;;
@@ -18,13 +19,26 @@ struct same_pf_cand_as {
   }
 };
 
+struct same_subjet_as { 
+  reco::Jet cand1;;
+  same_subjet_as( const reco::Jet& c ) : cand1 ( c ) {}
+  bool operator () ( const reco::Jet& cand2 ) const {
+    if ( cand1.pt () != cand2.pt () ) return false;
+    if ( cand1.eta() != cand2.eta() ) return false;
+    if ( cand1.phi() != cand2.phi() ) return false;
+    return true;
+  }
+};
+
 HgcalTupleMaker_PFJets::HgcalTupleMaker_PFJets(const edm::ParameterSet& iConfig) :
     inputTag        (iConfig.getParameter<edm::InputTag>("InputTag")),
+    subjetInputTag  (iConfig.getUntrackedParameter<edm::InputTag>("SubjetInputTag")),
     candInputTag    (iConfig.getParameter<edm::InputTag>("PFCandInputTag")),
     prefix          (iConfig.getParameter<std::string>  ("Prefix")),
     suffix          (iConfig.getParameter<std::string>  ("Suffix")),
     maxSize         (iConfig.getParameter<unsigned int> ("MaxSize")),
-    inputTagIsPruned(inputTag.label().find(std::string("Pruned")) != std::string::npos)
+    hasSubjets      (iConfig.getParameter<bool>         ("HasSubjets")),
+    isSubjets       (iConfig.getParameter<bool>         ("IsSubjets"))
 {
   produces <std::vector<double> >            ( prefix + "Eta"           + suffix );
   produces <std::vector<double> >            ( prefix + "Phi"           + suffix );
@@ -32,19 +46,20 @@ HgcalTupleMaker_PFJets::HgcalTupleMaker_PFJets(const edm::ParameterSet& iConfig)
   produces <std::vector<double> >            ( prefix + "Pt"            + suffix );
   produces <std::vector<double> >            ( prefix + "Mass"          + suffix );
   produces <std::vector<double> >            ( prefix + "Energy"        + suffix );
-  produces <std::vector<double> >            ( prefix + "Tau1"          + suffix );
-  produces <std::vector<double> >            ( prefix + "Tau2"          + suffix );
-  produces <std::vector<double> >            ( prefix + "Tau3"          + suffix );
-  produces <std::vector<double> >            ( prefix + "NSubJ"         + suffix );
-  produces <std::vector<std::vector<int> > > ( prefix + "PFCandIndices" + suffix );
 
-  if ( inputTagIsPruned ){
-    produces <std::vector<int> >                    ( prefix + "NDaughters"   + suffix );
-    produces <std::vector<double> >                 ( prefix + "MassDrop"     + suffix );
-    produces <std::vector<std::vector< double > > > ( prefix + "DaughterPt"   + suffix );
-    produces <std::vector<std::vector< double > > > ( prefix + "DaughterEta"  + suffix );
-    produces <std::vector<std::vector< double > > > ( prefix + "DaughterPhi"  + suffix );
-    produces <std::vector<std::vector< double > > > ( prefix + "DaughterMass" + suffix );
+  if ( hasSubjets ){
+    produces <std::vector<std::vector<int> > > ( prefix + "SubjetIndices" + suffix );
+  }
+
+  else { 
+    produces <std::vector<std::vector<int> > > ( prefix + "PFCandIndices" + suffix );
+    
+    if ( !isSubjets ){
+      produces <std::vector<double> >            ( prefix + "Tau1"          + suffix );
+      produces <std::vector<double> >            ( prefix + "Tau2"          + suffix );
+      produces <std::vector<double> >            ( prefix + "Tau3"          + suffix );
+      produces <std::vector<double> >            ( prefix + "NSubJ"         + suffix );
+    }
   }
 }
 
@@ -62,27 +77,31 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::auto_ptr<std::vector<double> >               tau3          ( new std::vector<double>() );
   std::auto_ptr<std::vector<double> >               nsubj         ( new std::vector<double>() );
   std::auto_ptr<std::vector<std::vector< int > > >  pfCandIndices ( new std::vector< std::vector< int > >() );
+  std::auto_ptr<std::vector<std::vector< int > > >  subjetIndices ( new std::vector< std::vector< int > >() );
 
-  std::auto_ptr<std::vector<int> >                  nDaughters    ( new std::vector<int>   () );
-  std::auto_ptr<std::vector<double> >               massDrop      ( new std::vector<double>() );
-  std::auto_ptr<std::vector<std::vector<double> > > daughterPt    ( new std::vector< std::vector<double> >() );
-  std::auto_ptr<std::vector<std::vector<double> > > daughterEta   ( new std::vector< std::vector<double> >() );
-  std::auto_ptr<std::vector<std::vector<double> > > daughterPhi   ( new std::vector< std::vector<double> >() );
-  std::auto_ptr<std::vector<std::vector<double> > > daughterMass  ( new std::vector< std::vector<double> >() );
-  
   edm::Handle<edm::View<reco::Jet> > jets;
-  iEvent.getByLabel(inputTag, jets);
-
+  edm::Handle<edm::View<reco::Jet> > subjets;
   edm::Handle<reco::PFCandidateCollection> pfCands;
-  iEvent.getByLabel(candInputTag, pfCands);
-
-  reco::PFCandidateCollection::const_iterator firstPFCand = pfCands -> begin();
-  reco::PFCandidateCollection::const_iterator lastPFCand  = pfCands -> end();
-  reco::PFCandidateCollection::const_iterator thisPFCand;
   
+  iEvent.getByLabel(inputTag, jets);
   edm::View<reco::Jet>::const_iterator it     = jets -> begin();
   edm::View<reco::Jet>::const_iterator it_end = jets -> end  ();
   
+  edm::View<reco::Jet>::const_iterator        firstSubjet, lastSubjet, thisSubjet;
+  reco::PFCandidateCollection::const_iterator firstPFCand, lastPFCand, thisPFCand;
+  
+  if ( hasSubjets ) {
+    iEvent.getByLabel(subjetInputTag, subjets);
+    firstSubjet = subjets -> begin();
+    lastSubjet  = subjets -> end();  
+  }
+
+  if (!hasSubjets){
+    iEvent.getByLabel(candInputTag, pfCands);
+    firstPFCand = pfCands -> begin();
+    lastPFCand  = pfCands -> end();  
+  }
+    
   if( jets.isValid() ) {
     edm::LogInfo("HgcalTupleMaker_PFJetsInfo") << "Total # Jets: " << jets->size();
     
@@ -97,71 +116,47 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       mass   -> push_back( it -> mass     () );
       energy -> push_back( it -> energy   () );
       pfCandIndices -> push_back( std::vector<int> () );
+      subjetIndices -> push_back( std::vector<int> () );
+
+      size_t last_index = pfCandIndices -> size() - 1;
       
-      double tmp_tau1  = -1.;
-      double tmp_tau2  = -1.;
-      double tmp_tau3  = -1.;
-      double tmp_nsubj = -1.;
+      if ( hasSubjets ){
 
-      reco::PFJet const * pfjet = dynamic_cast<reco::PFJet const *>( &*it);
-      if ( pfjet ) { 
-	tmp_tau1  = JetTools::getTau(1, *pfjet);
-	tmp_tau2  = JetTools::getTau(2, *pfjet);
-	tmp_tau3  = JetTools::getTau(3, *pfjet);
-	tmp_nsubj = ( tmp_tau1 > 0. ) ? tmp_tau2 / tmp_tau1 : -1.0;
+	size_t last_index = subjetIndices -> size() - 1;
+	int nSubjets = it -> numberOfDaughters();
+	
+	for (int iSubjet = 0; iSubjet < nSubjets; ++iSubjet){
+	  reco::PFJet const * subjet = dynamic_cast<reco::PFJet const *>(it -> daughter ( iSubjet ));
+	  thisSubjet = std::find_if( firstSubjet, lastSubjet, same_subjet_as ( * subjet ));
+	  (*subjetIndices)[last_index].push_back ( thisSubjet - firstSubjet );
+	}
+      }
+      
+      else { 
 
-	size_t last_pfcand_index = pfCandIndices -> size();
+	reco::PFJet const * pfjet = dynamic_cast<reco::PFJet const *>( &*it);
+	
 	std::vector<reco::PFCandidatePtr> constituents = pfjet -> getPFConstituents();
 	std::vector<reco::PFCandidatePtr>::const_iterator i_constituent = constituents.begin();
 	std::vector<reco::PFCandidatePtr>::const_iterator constituent_end = constituents.end();
 	
 	for (; i_constituent != constituent_end; ++i_constituent){
 	  thisPFCand = std::find_if( firstPFCand, lastPFCand, same_pf_cand_as ( *i_constituent ));
-	  (*pfCandIndices)[last_pfcand_index - 1].push_back ( thisPFCand - firstPFCand );
+	  (*pfCandIndices)[last_index].push_back ( thisPFCand - firstPFCand );
+	}
+	
+	if ( !isSubjets ) { 
+	  double tmp_tau1  = JetTools::getTau(1, *pfjet);
+	  double tmp_tau2  = JetTools::getTau(2, *pfjet);
+	  double tmp_tau3  = JetTools::getTau(3, *pfjet);
+	  double tmp_nsubj = ( tmp_tau1 > 0. ) ? tmp_tau2 / tmp_tau1 : -1.0;
+	  
+	  tau1  -> push_back( tmp_tau1  );
+	  tau2  -> push_back( tmp_tau2  );
+	  tau3  -> push_back( tmp_tau3  );
+	  nsubj -> push_back( tmp_nsubj );
 	}
       }
-      
-      tau1  -> push_back( tmp_tau1  );
-      tau2  -> push_back( tmp_tau2  );
-      tau3  -> push_back( tmp_tau3  );
-      nsubj -> push_back( tmp_nsubj );
-      
-      if ( inputTagIsPruned ) { 
-
-	// Prepare vectors
-	
-	daughterPt   -> push_back ( std::vector<double> () );
-	daughterEta  -> push_back ( std::vector<double> () );
-	daughterPhi  -> push_back ( std::vector<double> () );
-	daughterMass -> push_back ( std::vector<double> () );
-
-	// Info about daughters
-
-	int tmp_nDaughters = it -> numberOfDaughters();
-	size_t last_daughter_index = daughterPt -> size();
-	
-	for (int iDaughter = 0; iDaughter < tmp_nDaughters; ++iDaughter){
-	  reco::Candidate const * daughter = it -> daughter ( iDaughter );
-	  (*daughterPt  )[last_daughter_index - 1].push_back( daughter -> pt  () );
-	  (*daughterEta )[last_daughter_index - 1].push_back( daughter -> eta () );
-	  (*daughterPhi )[last_daughter_index - 1].push_back( daughter -> phi () );
-	  (*daughterMass)[last_daughter_index - 1].push_back( daughter -> mass() );
-	}
-	nDaughters -> push_back ( tmp_nDaughters );
-
-	// Info about mass drop
-	
-	double tmp_massDrop = -1;
-	if ( tmp_nDaughters > 1 ){
-	  double da1_mass = (*daughterMass)[last_daughter_index - 1][0];
-	  double da2_mass = (*daughterMass)[last_daughter_index - 1][1];
-	  if ( da1_mass > da2_mass ) tmp_massDrop = da1_mass / it -> mass ();
-	  else                       tmp_massDrop = da2_mass / it -> mass ();
-	}
-	massDrop -> push_back ( tmp_massDrop );
-	
-      }
-      
     }
   } else {
     edm::LogError("HgcalTupleMaker_PFJetsError") << "Error! Can't get the product " << inputTag;
@@ -173,19 +168,22 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   iEvent.put( pt            , prefix + "Pt"            + suffix );
   iEvent.put( mass          , prefix + "Mass"          + suffix );
   iEvent.put( energy        , prefix + "Energy"        + suffix );
-  iEvent.put( tau1          , prefix + "Tau1"          + suffix );
-  iEvent.put( tau2          , prefix + "Tau2"          + suffix );
-  iEvent.put( tau3          , prefix + "Tau3"          + suffix );
-  iEvent.put( nsubj         , prefix + "NSubJ"         + suffix );
-  iEvent.put( pfCandIndices , prefix + "PFCandIndices" + suffix );
-  
-  if ( inputTagIsPruned ) { 
-    iEvent.put ( nDaughters   , prefix + "NDaughters"   + suffix );
-    iEvent.put ( massDrop     , prefix + "MassDrop"     + suffix );
-    iEvent.put ( daughterPt   , prefix + "DaughterPt"   + suffix );
-    iEvent.put ( daughterEta  , prefix + "DaughterEta"  + suffix );
-    iEvent.put ( daughterPhi  , prefix + "DaughterPhi"  + suffix );
-    iEvent.put ( daughterMass , prefix + "DaughterMass" + suffix );
+
+  if ( hasSubjets ) {
+    iEvent.put( subjetIndices , prefix + "SubjetIndices" + suffix );
   }
+
+  else { 
+    iEvent.put( pfCandIndices , prefix + "PFCandIndices" + suffix );
+
+    if ( !isSubjets ){
+      iEvent.put( tau1          , prefix + "Tau1"          + suffix );
+      iEvent.put( tau2          , prefix + "Tau2"          + suffix );
+      iEvent.put( tau3          , prefix + "Tau3"          + suffix );
+      iEvent.put( nsubj         , prefix + "NSubJ"         + suffix );
+    }
+  }
+
+
 }
 

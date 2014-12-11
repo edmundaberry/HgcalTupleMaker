@@ -135,6 +135,7 @@ process.p = cms.Path(
     # Make HGCAL tuples
     process.myJetTupleMakerSequence*
     process.myPrunedJetTupleMakerSequence*
+    process.myPrunedSubJetTupleMakerSequence*
     process.hgcalTupleCaloJets*
     process.hgcalTupleEvent*
     process.hgcalTupleGenParticles*

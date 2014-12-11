@@ -7,10 +7,13 @@ ca4PFJetsCHS = ca8PFJetsCHS.clone( rParam = 0.4 )
 
 hgcalTuplePFCA4Jets = cms.EDProducer("HgcalTupleMaker_PFJets",
     InputTag = cms.InputTag('ca4PFJetsCHS'),
+    SubjetInputTag = cms.untracked.InputTag(''),
     PFCandInputTag = cms.InputTag('particleFlow'),                                  
     Prefix = cms.string('PFCA4Jet'),
     Suffix = cms.string(''),
-    MaxSize = cms.uint32(10)
+    MaxSize = cms.uint32(100),
+    HasSubjets = cms.bool(False),
+    IsSubjets = cms.bool(False)
 )
 
            
