@@ -13,9 +13,12 @@ class HgcalTupleMaker_PFJets : public edm::EDProducer {
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   double getTau(int num, const reco::PFJet & object);
-  const edm::InputTag   inputTag;
-  const edm::InputTag   subjetInputTag;
-  const edm::InputTag   candInputTag;
+  const edm::InputTag                rawInputTag;
+  const std::vector<edm::InputTag>   trimmedInputTags;
+  const std::vector<edm::InputTag>   subjetInputTags;
+  const edm::InputTag   pfcandInputTag;
+  const std::vector<std::string> rcutFactorStrings;
+  const std::vector<double> rcutFactors;
   const std::string     prefix,suffix;
   const unsigned int    maxSize;
   bool                  hasSubjets;

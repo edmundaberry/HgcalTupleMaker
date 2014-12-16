@@ -1,38 +1,31 @@
 import FWCore.ParameterSet.Config as cms
 
-from RecoJets.Configuration.RecoPFJets_cff import ca8PFJetsCHSPruned
+from RecoJets.Configuration.RecoPFJets_cff import ca8PFJetsCHSPruned, ca8PFJetsCHS
+
+ca4PFJetsCHS = ca8PFJetsCHS.clone( rParam = 0.4 )
 
 ca4PFJetsCHSPrunedRCut5 = ca8PFJetsCHSPruned.clone( rParam = 0.4 )
 ca4PFJetsCHSPrunedRCut5.jetCollInstanceName = cms.string("SubJets")
 ca4PFJetsCHSPrunedRCut5.writeCompound = cms.bool(True)
 ca4PFJetsCHSPrunedRCut5.jetPtMin = cms.double(1.)
 
-hgcalTuplePFCA4PrunedRCut5Jets = cms.EDProducer("HgcalTupleMaker_PFJets",
-    InputTag = cms.InputTag("ca4PFJetsCHSPrunedRCut5"),
-    SubjetInputTag = cms.untracked.InputTag("ca4PFJetsCHSPrunedRCut5", "SubJets"),
-    PFCandInputTag = cms.InputTag('particleFlow'),                                  
-    Prefix = cms.string('PFCA4PrunedJetRCut5'),
-    Suffix = cms.string(''),
-    MaxSize = cms.uint32(100),
-    HasSubjets = cms.bool(True),
-    IsSubjets = cms.bool(False)
-)
-             
-hgcalTuplePFCA4PrunedRCut5SubJets = cms.EDProducer("HgcalTupleMaker_PFJets",
-    InputTag = cms.InputTag("ca4PFJetsCHSPrunedRCut5", "SubJets"),
-    SubjetInputTag = cms.untracked.InputTag(""),
-    PFCandInputTag = cms.InputTag('particleFlow'),                                  
-    Prefix = cms.string('PFCA4PrunedSubJetRCut5'),
-    Suffix = cms.string(''),
-    MaxSize = cms.uint32(100),
-    HasSubjets = cms.bool(False),
-    IsSubjets = cms.bool(True)
-)
-                       
-myPrunedJetProducerSequence         = cms.Sequence ( ca4PFJetsCHSPrunedRCut5 ) 
-myPrunedJetTupleMakerSequence       = cms.Sequence ( hgcalTuplePFCA4PrunedRCut5Jets ) 
-myPrunedSubJetTupleMakerSequence    = cms.Sequence ( hgcalTuplePFCA4PrunedRCut5SubJets ) 
 
+hgcalTuplePFCA4PrunedJets = cms.EDProducer("HgcalTupleMaker_PFJets",
+    RawJetInputTag      = cms.InputTag("ca4PFJetsCHS"),
+    TrimmedJetInputTags = cms.VInputTag(("ca4PFJetsCHSPrunedRCut5")),
+    SubjetInputTags     = cms.VInputTag(("ca4PFJetsCHSPrunedRCut5", "SubJets")),
+    PFCandInputTag      = cms.InputTag('particleFlow'),                              
+    RCutFactorNames     = cms.vstring (("R5")),                                              
+    RCutFactors         = cms.vdouble ((0.5)),                                           
+    Prefix = cms.string('PFCA4Jet'),
+    Suffix = cms.string(''),
+    MaxSize = cms.uint32(100)
+)
+
+myJetProducerSequence         = cms.Sequence ( ca4PFJetsCHS )
+myPrunedJetProducerSequence   = cms.Sequence ( ca4PFJetsCHSPrunedRCut5 ) 
+myPrunedJetTupleMakerSequence = cms.Sequence ( hgcalTuplePFCA4PrunedJets ) 
+                               
 def makePrunedJetTupleMakersForRCuts ( process, rcut_factors ) :
 
     oldJetProducerName = "ca4PFJetsCHSPrunedRCut5"
@@ -55,32 +48,15 @@ def makePrunedJetTupleMakersForRCuts ( process, rcut_factors ) :
         myPrunedJetProducerSequence.replace ( getattr(process, oldJetProducerName), 
                                               getattr(process, oldJetProducerName) + getattr(process,newJetProducerName))
         
-        # Create the new hgcalTupleMaker module from the old hgcalTupleMaker module
-        oldTupleMakerName = "hgcalTuplePFCA4PrunedRCut5Jets"
-        newTupleMakerName = oldTupleMakerName.replace("5", factorString)
-        oldSubjetTupleMakerName = "hgcalTuplePFCA4PrunedRCut5SubJets"
-        newSubjetTupleMakerName = newTupleMakerName.replace("Jets", "SubJets")
+        # Add the new jet producer to the tags to be investigated by the tuple maker module
+        hgcalTuplePFCA4PrunedJets.TrimmedJetInputTags.append ( cms.InputTag( newJetProducerName ) )
+        hgcalTuplePFCA4PrunedJets.SubjetInputTags.append ( cms.InputTag( newJetProducerName, "SubJets" ) )
+        hgcalTuplePFCA4PrunedJets.RCutFactorNames.append ( "R" + factorString ) 
+        hgcalTuplePFCA4PrunedJets.RCutFactors.append ( rcut_factor ) 
 
-        setattr(process, newTupleMakerName      ,  hgcalTuplePFCA4PrunedRCut5Jets.clone() )
-        setattr(process, newSubjetTupleMakerName,  hgcalTuplePFCA4PrunedRCut5SubJets.clone() )
-        
-        # Set the new hgcalTupleMaker module's parameters
-        newTupleMakerModule = getattr( process, newTupleMakerName ) 
-        newTupleMakerModule.InputTag = cms.InputTag("ca4PFJetsCHSPrunedRCut" + factorString)
-        newTupleMakerModule.SubjetInputTag = cms.untracked.InputTag("ca4PFJetsCHSPrunedRCut" + factorString, "SubJets")
-        newTupleMakerModule.Prefix   = cms.string  ("PFCA4PrunedJetRCut" + factorString )
-
-        newSubjetTupleMakerModule = getattr( process, newSubjetTupleMakerName ) 
-        newSubjetTupleMakerModule.InputTag = cms.InputTag("ca4PFJetsCHSPrunedRCut" + factorString, "SubJets")
-        newSubjetTupleMakerModule.SubjetInputTag = cms.untracked.InputTag("")
-        newSubjetTupleMakerModule.Prefix   = cms.string  ("PFCA4PrunedSubJetRCut" + factorString )
-    
-        # Put the new hgcalTupleMaker into the sequence 
-        myPrunedJetTupleMakerSequence.replace ( getattr(process, oldTupleMakerName), 
-                                                getattr(process, oldTupleMakerName) + getattr(process,newTupleMakerName))
-        myPrunedSubJetTupleMakerSequence.replace ( getattr(process, oldSubjetTupleMakerName), 
-                                                   getattr(process, oldSubjetTupleMakerName) + getattr(process,newSubjetTupleMakerName))
-        
-    
         # Silence message logger
         process.MessageLogger.suppressError.append ( newJetProducerName )
+
+    
+
+
