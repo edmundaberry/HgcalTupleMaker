@@ -20,16 +20,19 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 
 process.source = cms.Source("PoolSource", 
    fileNames = cms.untracked.vstring(
-       '/store/relval/CMSSW_6_2_0_SLHC20/RelValQQH1352T_Tauola_14TeV/GEN-SIM-RECO/DES23_62_V1_HGCalV5-v1/00000/5A5B93CA-C46E-E411-AA16-002618943957.root',
-       '/store/relval/CMSSW_6_2_0_SLHC20/RelValQQH1352T_Tauola_14TeV/GEN-SIM-RECO/DES23_62_V1_HGCalV5-v1/00000/62B136A1-BF6E-E411-9F35-0026189438B3.root',
-       '/store/relval/CMSSW_6_2_0_SLHC20/RelValQQH1352T_Tauola_14TeV/GEN-SIM-RECO/DES23_62_V1_HGCalV5-v1/00000/D8E5A7A3-BF6E-E411-ABB6-00261894382D.root',
-       '/store/relval/CMSSW_6_2_0_SLHC20/RelValQQH1352T_Tauola_14TeV/GEN-SIM-RECO/DES23_62_V1_HGCalV5-v1/00000/E474D02D-B36E-E411-9673-0025905964BE.root',
-       '/store/relval/CMSSW_6_2_0_SLHC20/RelValQQH1352T_Tauola_14TeV/GEN-SIM-RECO/DES23_62_V1_HGCalV5-v1/00000/E661606D-C76E-E411-AD1E-0026189438D6.root' 
+       #FILENAMES
    )
 )
 
+process.source.skipEvents = cms.untracked.uint32(
+    #SKIPEVENTS
+)
+
+
 process.maxEvents = cms.untracked.PSet(
-   input = cms.untracked.int32(1000)
+   input = cms.untracked.int32(
+       #PROCESSEVENTS
+   )
 )
 
 #------------------------------------------------------------------------------------
@@ -38,7 +41,7 @@ process.maxEvents = cms.untracked.PSet(
 
 process.TFileService = cms.Service("TFileService",
                                     # fileName = cms.string( 'HGCAL_WJet_output.root' )
-fileName = cms.string( 'HGCAL_QQH_output.root' )
+fileName = cms.string( 'OUTPUTFILENAME.root')
 )
 
 #------------------------------------------------------------------------------------
