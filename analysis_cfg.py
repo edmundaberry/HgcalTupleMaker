@@ -93,19 +93,19 @@ process.load("CommonTools.ParticleFlow.pfNoPileUpJME_cff")
 #------------------------------------------------------------------------------------
 
 rcut_factors = [ 
-    0.001,
-    0.003,
-    0.005,
-    0.008,
-    0.01 ,
-    0.02 ,
-    0.03 ,
-    0.04 ,
-    0.05 ,
-    0.1  ,
-    0.2  ,
+    0.4  ,
     0.3  ,
-    0.4  
+    0.2  ,
+    0.1  ,
+    0.05 ,
+    0.04 ,
+    0.03 ,
+    0.02 ,
+    0.01 ,
+    0.008,
+    0.005,
+    0.003,
+    0.001
 ]
 
 process.load("RecoParticleFlow.PFClusterProducer.particleFlowRecHitHGC_cff")
@@ -133,9 +133,7 @@ process.p = cms.Path(
     process.myJetProducerSequence*
     process.myPrunedJetProducerSequence*
     # Make HGCAL tuples
-    process.myJetTupleMakerSequence*
     process.myPrunedJetTupleMakerSequence*
-    process.myPrunedSubJetTupleMakerSequence*
     process.hgcalTupleCaloJets*
     process.hgcalTupleEvent*
     process.hgcalTupleGenParticles*
