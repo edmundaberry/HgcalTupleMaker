@@ -8,6 +8,7 @@
   <use   name="DataFormats/ParticleFlowCandidate"/>
   <use   name="DataFormats/ParticleFlowReco"/>
   <use   name="DataFormats/JetReco"/>
+  <use   name="DataFormats/TauReco"/>
   <use   name="HGCALANA/HgcalTupleMaker"/>
   <use   name="boost"/>
   <use   name="rootcore"/>
