@@ -9,3 +9,4 @@ from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_PFCands_cfi      i
 from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_PFClusters_cfi   import * 
 from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_CaloJets_cfi     import * 
 from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_HgcalRecHits_cfi import * 
+from HGCALANA.HgcalTupleMaker.HgcalTupleMaker.HgcalTupleMaker_Vertex_cfi       import * 

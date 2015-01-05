@@ -11,6 +11,7 @@
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_PFClusters.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_CaloJets.h"
 #include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_HgcalRecHits.h"
+#include "HGCALANA/HgcalTupleMaker/interface/HgcalTupleMaker_Vertex.h"
 
 DEFINE_FWK_MODULE(HgcalTupleMaker_Tree);
 DEFINE_FWK_MODULE(HgcalTupleMaker_Event);
@@ -22,3 +23,4 @@ DEFINE_FWK_MODULE(HgcalTupleMaker_PFCands);
 DEFINE_FWK_MODULE(HgcalTupleMaker_PFClusters);
 DEFINE_FWK_MODULE(HgcalTupleMaker_CaloJets);
 DEFINE_FWK_MODULE(HgcalTupleMaker_HgcalRecHits);
+DEFINE_FWK_MODULE(HgcalTupleMaker_Vertex);

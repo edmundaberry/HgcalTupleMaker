@@ -80,7 +80,8 @@ process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
         'keep *_hgcalTupleCaloJets_*_*',
         'keep *_hgcalTupleHGEERecHits_*_*', 
         'keep *_hgcalTupleHGHEBRecHits_*_*', 
-        'keep *_hgcalTupleHGHEFRecHits_*_*'
+        'keep *_hgcalTupleHGHEFRecHits_*_*',
+        'keep *_hgcalTupleVertex_*_*',
     )
 )                                        
 
@@ -150,6 +151,7 @@ process.p = cms.Path(
     process.hgcalTupleHGEERecHits* 
     process.hgcalTupleHGHEBRecHits*
     process.hgcalTupleHGHEFRecHits*
+    process.hgcalTupleVertex*
     # Package everything into a tree
     process.hgcalTupleTree
 )
