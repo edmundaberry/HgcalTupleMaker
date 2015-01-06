@@ -12,7 +12,7 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 process = cms.Process("ANA")
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 
 #------------------------------------------------------------------------------------
 # Set up the input
@@ -136,6 +136,9 @@ process.p = cms.Path(
     process.pfNoPileUpJMESequence*          
     # Produce new jet collections
     process.myJetProducerSequence*
+    # Select PF objects
+    process.hgcPFSelectorSequence*
+    # Produce new pruned jet collections
     process.myPrunedJetProducerSequence*
     # Make HGCAL tuples
     process.myPrunedJetTupleMakerSequence*

@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 hgcalTupleHGEERecHits = cms.EDProducer('HgcalTupleMaker_HgcalRecHits',
-    InputTag = cms.InputTag('HGCalRecHit','HGCEERecHits'),
+    InputTag = cms.InputTag('selectHGCEERecHits'),
     Prefix = cms.string('HGCEERecHit'),
     GeometryTag = cms.string('HGCalEESensitive'),
     Suffix = cms.string(''),
@@ -9,7 +9,7 @@ hgcalTupleHGEERecHits = cms.EDProducer('HgcalTupleMaker_HgcalRecHits',
 )
 
 hgcalTupleHGHEBRecHits = cms.EDProducer('HgcalTupleMaker_HgcalRecHits',
-    InputTag = cms.InputTag('HGCalRecHit','HGCHEBRecHits'),
+    InputTag = cms.InputTag('selectHGCHEBRecHits'),
     Prefix = cms.string('HGCHEBRecHit'),
     GeometryTag = cms.string('HGCalHEScintillatorSensitive'),
     Suffix = cms.string(''),
@@ -17,7 +17,7 @@ hgcalTupleHGHEBRecHits = cms.EDProducer('HgcalTupleMaker_HgcalRecHits',
 )
 
 hgcalTupleHGHEFRecHits = cms.EDProducer('HgcalTupleMaker_HgcalRecHits',
-    InputTag = cms.InputTag('HGCalRecHit','HGCHEFRecHits'),
+    InputTag = cms.InputTag('selectHGCHEFRecHits'),
     Prefix = cms.string('HGCHEFRecHit'),
     GeometryTag = cms.string('HGCalHESiliconSensitive'),
     Suffix = cms.string(''),
