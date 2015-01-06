@@ -52,9 +52,9 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       const reco::PFBlockElementCluster* elementCluster = dynamic_cast<const reco::PFBlockElementCluster *>( element );
       const reco::PFClusterRef& clusterRef = elementCluster -> clusterRef();
       
-      if      ( elementType != reco::PFBlockElement::HGC_ECAL  ) outputHGCEEPFClusters  -> push_back ( * clusterRef );
-      else if ( elementType != reco::PFBlockElement::HGC_HCALF ) outputHGCHEFPFClusters -> push_back ( * clusterRef );
-      else if ( elementType != reco::PFBlockElement::HGC_HCALB ) outputHGCHEBPFClusters -> push_back ( * clusterRef );
+      if      ( elementType == reco::PFBlockElement::HGC_ECAL  ) outputHGCEEPFClusters  -> push_back ( * clusterRef );
+      else if ( elementType == reco::PFBlockElement::HGC_HCALF ) outputHGCHEFPFClusters -> push_back ( * clusterRef );
+      else if ( elementType == reco::PFBlockElement::HGC_HCALB ) outputHGCHEBPFClusters -> push_back ( * clusterRef );
       
     }
   }
