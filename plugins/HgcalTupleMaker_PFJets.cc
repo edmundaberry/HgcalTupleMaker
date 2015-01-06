@@ -134,9 +134,14 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     rCutFactors ->    push_back (rcutFactors[iTrimmed]);
     rCutFactorStrings ->push_back (rcutFactorStrings [iTrimmed]);
   }
-  
+
+  unsigned int iJet = 0;
+
   for (; it_rawJet != it_rawJet_end; ++it_rawJet){
     
+    iJet++;
+    if ( iJet > maxSize ) break;
+
     reco::PFJet const * rawPFJet = dynamic_cast<reco::PFJet const *>( &*it_rawJet);
 
     double tmp_tau1  = JetTools::getTau(1, *rawPFJet);
