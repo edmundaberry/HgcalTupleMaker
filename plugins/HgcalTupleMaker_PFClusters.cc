@@ -66,7 +66,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       Z      -> push_back ( position.Z()   );
       R      -> push_back ( position.R()   );
       Eta    -> push_back ( position.Eta() );
-      Phi    -> push_back ( position.Eta() );
+      Phi    -> push_back ( position.Phi() );
       
       recHitIndex    -> push_back ( std::vector<int>    () );
       recHitFraction -> push_back ( std::vector<double> () );
