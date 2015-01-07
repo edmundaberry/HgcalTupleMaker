@@ -19,7 +19,7 @@ hgcalTuplePFCA4PrunedJets = cms.EDProducer("HgcalTupleMaker_PFJets",
     RCutFactors         = cms.vdouble ((0.5)),                                           
     Prefix = cms.string('PFCA4Jet'),
     Suffix = cms.string(''),
-    MaxSize = cms.uint32(100)
+    MaxSize = cms.uint32(10)
 )
 
 myJetProducerSequence         = cms.Sequence ( ca4PFJetsCHS )

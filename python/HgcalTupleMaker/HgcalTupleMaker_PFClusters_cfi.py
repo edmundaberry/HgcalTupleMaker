@@ -1,22 +1,22 @@
 import FWCore.ParameterSet.Config as cms
 
 hgcalTupleHGEEPFClusters = cms.EDProducer("HgcalTupleMaker_PFClusters",
-    InputTag = cms.InputTag('particleFlowClusterHGCEE'),                                  
-    RecHits = cms.InputTag('HGCalRecHit','HGCEERecHits'),
+    InputTag = cms.InputTag("selectPFClusters", "HGCEEClusters"),
+    RecHits = cms.InputTag("selectHGCEERecHits"),
     Prefix = cms.string('HGCEEPFCluster'),
     Suffix = cms.string('')
 )
 
 hgcalTupleHGHEBPFClusters = cms.EDProducer("HgcalTupleMaker_PFClusters",
-    InputTag = cms.InputTag('particleFlowClusterHGCHEB'),                                  
-    RecHits = cms.InputTag('HGCalRecHit','HGCHEBRecHits'),
+    InputTag = cms.InputTag("selectPFClusters", "HGCHEBClusters"),
+    RecHits = cms.InputTag("selectHGCHEBRecHits"),
     Prefix = cms.string('HGCHEBPFCluster'),
     Suffix = cms.string('')
 )
 
 hgcalTupleHGHEFPFClusters = cms.EDProducer("HgcalTupleMaker_PFClusters",
-    InputTag = cms.InputTag('particleFlowClusterHGCHEF'),                                  
-    RecHits = cms.InputTag('HGCalRecHit','HGCHEFRecHits'),
+    InputTag = cms.InputTag("selectPFClusters", "HGCHEFClusters"),
+    RecHits = cms.InputTag("selectHGCHEFRecHits"),
     Prefix = cms.string('HGCHEFPFCluster'),
     Suffix = cms.string('')
 )
