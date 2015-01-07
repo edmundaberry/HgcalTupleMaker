@@ -6,22 +6,22 @@ selectPFCands = cms.EDProducer("HgcalTupleMaker_PFCandProducer",
 )
 
 selectPFClusters = cms.EDProducer("HgcalTupleMaker_HGCClusterProducer",
-    RawCandInputTag = cms.InputTag ("selectPFCands")
+    RawCandInputTag    = cms.InputTag ("selectPFCands")
 )
 
 selectHGCEERecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
     RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCEEClusters"),
-    RecHitInputTag = cms.InputTag("HGCalRecHit","HGCEERecHits")
+    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCEERecHits")
 )
 
 selectHGCHEFRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
     RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCHEFClusters"),
-    RecHitInputTag = cms.InputTag("HGCalRecHit","HGCHEFRecHits")
+    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCHEFRecHits")
 )
 
 selectHGCHEBRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
     RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCHEBClusters"),
-    RecHitInputTag = cms.InputTag("HGCalRecHit","HGCHEBRecHits")
+    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCHEBRecHits")
 )
 
 hgcPFSelectorSequence = cms.Sequence (
