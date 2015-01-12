@@ -50,6 +50,7 @@ HgcalTupleMaker_PFJets::HgcalTupleMaker_PFJets(const edm::ParameterSet& iConfig)
   produces <std::vector<double> >               ( prefix + "P"               + suffix );
   produces <std::vector<double> >               ( prefix + "Pt"              + suffix );
   produces <std::vector<double> >               ( prefix + "Energy"          + suffix );
+  produces <std::vector<double> >               ( prefix + "Area"            + suffix );
   produces <std::vector<double> >               ( prefix + "RawMass"         + suffix );
   produces <std::vector<int> >                  ( prefix + "RawNPFCands"     + suffix );
   produces <std::vector<double> >               ( prefix + "Tau1"            + suffix );
@@ -92,6 +93,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::auto_ptr<std::vector<double> >               p               ( new std::vector<double>() );
   std::auto_ptr<std::vector<double> >               pt              ( new std::vector<double>() );
   std::auto_ptr<std::vector<double> >               energy          ( new std::vector<double>() );
+  std::auto_ptr<std::vector<double> >               area            ( new std::vector<double>() );
   std::auto_ptr<std::vector<double> >               rawMass         ( new std::vector<double>() );
   std::auto_ptr<std::vector<int> >                  rawNCands       ( new std::vector<int>   () );
   std::auto_ptr<std::vector<double> >               tau1            ( new std::vector<double>() );
@@ -154,6 +156,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     p         -> push_back( it_rawJet -> p        () );
     pt        -> push_back( it_rawJet -> pt       () );
     energy    -> push_back( it_rawJet -> energy   () );
+    area      -> push_back( it_rawJet -> jetArea  () );
     rawMass   -> push_back( it_rawJet -> mass     () );
     rawNCands -> push_back( rawPFJet  -> getPFConstituents ().size());
     tau1      -> push_back( tmp_tau1  );
@@ -175,7 +178,9 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
     for (; i_constituent != constituent_end; ++i_constituent){
       thisPFCand = std::find_if( firstPFCand, lastPFCand, same_pf_cand_as ( *i_constituent ));
-      (*pfCandIndices)[last_index].push_back ( thisPFCand - firstPFCand );
+      int index = -1;
+      if ( thisPFCand != lastPFCand ) index = thisPFCand - firstPFCand;
+      (*pfCandIndices)[last_index].push_back ( index );
     }
     
     for (int iTrimmed = 0; iTrimmed < nTrimmed; ++iTrimmed){
@@ -198,24 +203,25 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     }
   }
 
-  iEvent.put( rCutFactors     , prefix + "RCutFactors"      + suffix );
+  iEvent.put( rCutFactors       , prefix + "RCutFactors"      + suffix );
   iEvent.put( rCutFactorStrings , prefix + "RCutFactorNames"  + suffix );
-  iEvent.put( eta             , prefix + "Eta"              + suffix );
-  iEvent.put( phi             , prefix + "Phi"              + suffix );
-  iEvent.put( p               , prefix + "P"                + suffix );
-  iEvent.put( pt              , prefix + "Pt"               + suffix );
-  iEvent.put( energy          , prefix + "Energy"           + suffix );
-  iEvent.put( rawMass         , prefix + "RawMass"          + suffix );
-  iEvent.put( rawNCands       , prefix + "RawNPFCands"      + suffix );
-  iEvent.put( tau1            , prefix + "Tau1"             + suffix );
-  iEvent.put( tau2            , prefix + "Tau2"             + suffix );
-  iEvent.put( tau3            , prefix + "Tau3"             + suffix );
-  iEvent.put( nSubJ           , prefix + "NSubJ"            + suffix );
-  iEvent.put( pfCandIndices   , prefix + "PFCandIndices"    + suffix );
-  iEvent.put( trimmedMass     , prefix + "TrimmedMass"      + suffix );
-  iEvent.put( trimmedMassDrop , prefix + "TrimmedMassDrop"  + suffix );
-  iEvent.put( trimmedNCands   , prefix + "TrimmedNPFCands"  + suffix );
-  iEvent.put( trimmedNSubjets , prefix + "TrimmedNSubjets"  + suffix );
+  iEvent.put( eta               , prefix + "Eta"              + suffix );
+  iEvent.put( phi               , prefix + "Phi"              + suffix );
+  iEvent.put( p                 , prefix + "P"                + suffix );
+  iEvent.put( pt                , prefix + "Pt"               + suffix );
+  iEvent.put( energy            , prefix + "Energy"           + suffix );
+  iEvent.put( area              , prefix + "Area"             + suffix );
+  iEvent.put( rawMass           , prefix + "RawMass"          + suffix );
+  iEvent.put( rawNCands         , prefix + "RawNPFCands"      + suffix );
+  iEvent.put( tau1              , prefix + "Tau1"             + suffix );
+  iEvent.put( tau2              , prefix + "Tau2"             + suffix );
+  iEvent.put( tau3              , prefix + "Tau3"             + suffix );
+  iEvent.put( nSubJ             , prefix + "NSubJ"            + suffix );
+  iEvent.put( pfCandIndices     , prefix + "PFCandIndices"    + suffix );
+  iEvent.put( trimmedMass       , prefix + "TrimmedMass"      + suffix );
+  iEvent.put( trimmedMassDrop   , prefix + "TrimmedMassDrop"  + suffix );
+  iEvent.put( trimmedNCands     , prefix + "TrimmedNPFCands"  + suffix );
+  iEvent.put( trimmedNSubjets   , prefix + "TrimmedNSubjets"  + suffix );
 
 }
 
