@@ -72,6 +72,7 @@ process.hgcalTupleTree = cms.EDAnalyzer("HgcalTupleMaker_Tree",
         'keep *_hgcalTupleGenJets_*_*',
         'keep *_hgcalTuplePFJets_*_*',
         'keep *_hgcalTuplePFCA*Jets_*_*',
+        'keep *_hgcalTuplePFAK*Jets_*_*',
         'keep *_hgcalTuplePFTaus_*_*',
         'keep *_hgcalTuplePFCands_*_*',
         'keep *_hgcalTupleHGEEPFClusters_*_*',
@@ -142,6 +143,7 @@ process.p = cms.Path(
     process.myPrunedJetProducerSequence*
     # Make HGCAL tuples
     process.myPrunedJetTupleMakerSequence*
+    process.hgcalTuplePFAK1p5Jets*
     process.hgcalTupleCaloJets*
     process.hgcalTupleEvent*
     process.hgcalTupleGenParticles*

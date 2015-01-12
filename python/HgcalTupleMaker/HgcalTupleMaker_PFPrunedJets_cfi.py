@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from RecoJets.Configuration.RecoPFJets_cff import ca8PFJetsCHSPruned, ca8PFJetsCHS
+from RecoJets.Configuration.RecoPFJets_cff import ca8PFJetsCHSPruned, ca8PFJetsCHS, ak5PFJetsCHS
 
 ca4PFJetsCHS = ca8PFJetsCHS.clone( rParam = 0.4 )
 
@@ -8,6 +8,20 @@ ca4PFJetsCHSPrunedRCut5 = ca8PFJetsCHSPruned.clone( rParam = 0.4 )
 ca4PFJetsCHSPrunedRCut5.jetCollInstanceName = cms.string("SubJets")
 ca4PFJetsCHSPrunedRCut5.writeCompound = cms.bool(True)
 ca4PFJetsCHSPrunedRCut5.jetPtMin = cms.double(1.)
+
+ak1p5PFJetsCHS = ak5PFJetsCHS.clone( rParam = 0.15 )
+
+hgcalTuplePFAK1p5Jets = cms.EDProducer("HgcalTupleMaker_PFJets",
+    RawJetInputTag      = cms.InputTag("ak1p5PFJetsCHS"),
+    TrimmedJetInputTags = cms.VInputTag(),
+    SubjetInputTags     = cms.VInputTag(),
+    PFCandInputTag      = cms.InputTag("selectPFCands"),
+    RCutFactorNames     = cms.vstring (),
+    RCutFactors         = cms.vdouble (),
+    Prefix = cms.string('PFAK1p5Jet'),
+    Suffix = cms.string(''),
+    MaxSize = cms.uint32(10)
+)
 
 
 hgcalTuplePFCA4PrunedJets = cms.EDProducer("HgcalTupleMaker_PFJets",
@@ -22,7 +36,7 @@ hgcalTuplePFCA4PrunedJets = cms.EDProducer("HgcalTupleMaker_PFJets",
     MaxSize = cms.uint32(10)
 )
 
-myJetProducerSequence         = cms.Sequence ( ca4PFJetsCHS )
+myJetProducerSequence         = cms.Sequence ( ca4PFJetsCHS * ak1p5PFJetsCHS )
 myPrunedJetProducerSequence   = cms.Sequence ( ca4PFJetsCHSPrunedRCut5 ) 
 myPrunedJetTupleMakerSequence = cms.Sequence ( hgcalTuplePFCA4PrunedJets ) 
                                
