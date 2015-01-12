@@ -10,7 +10,7 @@ class HgcalTupleMaker_Event : public edm::EDProducer {
 
  private:
   void produce( edm::Event &, const edm::EventSetup & );
-
+  edm::InputTag rhoInputTag;
 };
 
 #endif
