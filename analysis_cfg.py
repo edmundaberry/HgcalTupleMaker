@@ -15,23 +15,58 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 
 #------------------------------------------------------------------------------------
+# Options
+#------------------------------------------------------------------------------------
+
+options = VarParsing.VarParsing()
+
+options.register('skipEvents',
+                 0, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to skip")
+
+options.register('processEvents',
+                 0, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to process")
+
+options.register('inputFiles',
+                 "file:inputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.list,
+                 VarParsing.VarParsing.varType.string,
+                 "Input files")
+
+options.register('outputFile',
+                 "file:outputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.string,
+                 "Output file")
+
+options.parseArguments()
+
+print "Skip events =", options.skipEvents
+print "Process events =", options.processEvents
+print "inputFiles =", options.inputFiles
+print "outputFile =", options.outputFile
+
+#------------------------------------------------------------------------------------
 # Set up the input
 #------------------------------------------------------------------------------------
 
 process.source = cms.Source("PoolSource", 
    fileNames = cms.untracked.vstring(
-       #FILENAMES
+       options.inputFiles
+   ),
+   skipEvents = cms.untracked.uint32(
+       options.skipEvents
    )
 )
 
-process.source.skipEvents = cms.untracked.uint32(
-    #SKIPEVENTS
-)
-
-
 process.maxEvents = cms.untracked.PSet(
    input = cms.untracked.int32(
-       #PROCESSEVENTS
+       options.processEvents
    )
 )
 
@@ -40,8 +75,7 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-                                    # fileName = cms.string( 'HGCAL_WJet_output.root' )
-fileName = cms.string( 'OUTPUTFILENAME.root')
+                                   fileName = cms.string( options.outputFile )
 )
 
 #------------------------------------------------------------------------------------
@@ -56,7 +90,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 # Set up geometry to get positions of rechits:
 #------------------------------------------------------------------------------------
 
-process.load('Configuration.Geometry.GeometryExtended2023HGCalV4MuonReco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023HGCalMuonReco_cff')
 
 #------------------------------------------------------------------------------------
 # Set up our analyzer
@@ -153,9 +187,15 @@ process.p = cms.Path(
     process.hgcalTupleHGEEPFClusters*
     process.hgcalTupleHGHEBPFClusters*
     process.hgcalTupleHGHEFPFClusters*
-    process.hgcalTupleHGEERecHits* 
-    process.hgcalTupleHGHEBRecHits*
-    process.hgcalTupleHGHEFRecHits*
+    process.hgcalTupleHGCEERecHitsFromHGCEEClusters* 
+    process.hgcalTupleHGCHEBRecHitsFromHGCEEClusters* 
+    process.hgcalTupleHGCHEFRecHitsFromHGCEEClusters* 
+    process.hgcalTupleHGCEERecHitsFromHGCHEBClusters* 
+    process.hgcalTupleHGCHEBRecHitsFromHGCHEBClusters* 
+    process.hgcalTupleHGCHEFRecHitsFromHGCHEBClusters* 
+    process.hgcalTupleHGCEERecHitsFromHGCHEFClusters* 
+    process.hgcalTupleHGCHEBRecHitsFromHGCHEFClusters* 
+    process.hgcalTupleHGCHEFRecHitsFromHGCHEFClusters* 
     process.hgcalTupleVertex*
     # Package everything into a tree
     process.hgcalTupleTree
