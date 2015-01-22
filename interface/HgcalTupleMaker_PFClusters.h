@@ -12,7 +12,9 @@ class HgcalTupleMaker_PFClusters : public edm::EDProducer {
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag   inputTag;
-  const edm::InputTag   recHitInputTag;
+  const edm::InputTag   hgceeRecHitInputTag;
+  const edm::InputTag   hgchefRecHitInputTag;
+  const edm::InputTag   hgchebRecHitInputTag;
   const std::string     prefix,suffix;
 };
 

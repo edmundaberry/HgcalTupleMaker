@@ -12,7 +12,9 @@ class HgcalTupleMaker_HGCRecHitProducer : public edm::EDProducer {
  private:
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag rawInputTag;
-  const edm::InputTag recHitInputTag;
+  const edm::InputTag hgceeRecHitInputTag;
+  const edm::InputTag hgchebRecHitInputTag;
+  const edm::InputTag hgchefRecHitInputTag;
 };
 
 #endif

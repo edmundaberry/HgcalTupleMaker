@@ -9,25 +9,31 @@ selectPFClusters = cms.EDProducer("HgcalTupleMaker_HGCClusterProducer",
     RawCandInputTag    = cms.InputTag ("selectPFCands")
 )
 
-selectHGCEERecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
-    RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCEEClusters"),
-    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCEERecHits")
+selectHGCEEClusterRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
+    RawClusterInputTag   = cms.InputTag("selectPFClusters", "HGCEEClusters"),
+    HGCEERecHitInputTag  = cms.InputTag("HGCalRecHit"     , "HGCEERecHits"),
+    HGCHEFRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEFRecHits"),
+    HGCHEBRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEBRecHits")
 )
 
-selectHGCHEFRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
+selectHGCHEFClusterRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
     RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCHEFClusters"),
-    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCHEFRecHits")
+    HGCEERecHitInputTag  = cms.InputTag("HGCalRecHit"     , "HGCEERecHits"),
+    HGCHEFRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEFRecHits"),
+    HGCHEBRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEBRecHits")
 )
 
-selectHGCHEBRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
+selectHGCHEBClusterRecHits = cms.EDProducer("HgcalTupleMaker_HGCRecHitProducer",
     RawClusterInputTag = cms.InputTag("selectPFClusters", "HGCHEBClusters"),
-    RecHitInputTag     = cms.InputTag("HGCalRecHit"     , "HGCHEBRecHits")
+    HGCEERecHitInputTag  = cms.InputTag("HGCalRecHit"     , "HGCEERecHits"),
+    HGCHEFRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEFRecHits"),
+    HGCHEBRecHitInputTag = cms.InputTag("HGCalRecHit"     , "HGCHEBRecHits")
 )
 
 hgcPFSelectorSequence = cms.Sequence (
     selectPFCands*
     selectPFClusters*
-    selectHGCEERecHits*
-    selectHGCHEFRecHits*
-    selectHGCHEBRecHits
+    selectHGCEEClusterRecHits*
+    selectHGCHEFClusterRecHits*
+    selectHGCHEBClusterRecHits
 )
