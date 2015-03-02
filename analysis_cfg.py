@@ -2,6 +2,7 @@
 # Imports
 #------------------------------------------------------------------------------------
 
+import sys
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 
@@ -154,7 +155,16 @@ rcut_factors = [
     0.001
 ]
 
+#------------------------------------------------------------------------------------
+# Need to re-run part of reconstruction step for Pandora
+#------------------------------------------------------------------------------------
+
+process.load("Configuration.StandardSequences.Reconstruction_cff")
+process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("RecoParticleFlow.PFClusterProducer.particleFlowRecHitHGC_cff")
+process.load("UserCode.HGCanalysis.hgcTrackerInteractionsFilter_cfi")
+process.load('HGCal.PandoraTranslator.HGCalTrackCollection_cfi')
+process.load('HGCal.PandoraTranslator.runPandora_cfi')
 
 #------------------------------------------------------------------------------------
 # Process the list of rcut_factors.  This makes two new sequences:
@@ -173,6 +183,9 @@ makePrunedJetTupleMakersForRCuts (process, rcut_factors )
 process.p = cms.Path(
     # Needed to get PFRecHits
     process.particleFlowRecHitHGC*
+    process.pfTrack*
+    process.HGCalTrackCollection*
+    process.pandorapfanew*
     # Needed to produce new jet collections:
     process.pfNoPileUpJMESequence*          
     # Produce new jet collections
@@ -213,3 +226,5 @@ process.p = cms.Path(
 
 process.schedule = cms.Schedule(process.p)
 
+from SLHCUpgradeSimulations.Configuration.combinedCustoms import cust_2023HGCalMuon
+process = cust_2023HGCalMuon(process)
